@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studybook.between.user.mapper.UserMapper">
+    <insert id="createUserProfile">
+        INSERT INTO bt_user (
+            email,
+            user_name,
+            password,
+            couple_email,
+            status_code,
+            create_date
+        ) VALUES (
+            #{user.email},
+            #{user.userName},
+            #{user.password},
+            #{user.coupleEmail},
+            #{user.statusCode},
+            now()
+        )
+    </insert>
+
+    <select id="getUserProfile" resultType="com.studybook.between.user.model.User">
+        SELECT
+            user_id AS userId,
+            email AS email,
+            user_name AS userName,
+            password AS password,
+            couple_email AS coupleEmail,
+            status_code AS statusCode,
+            create_date AS createDate
+        FROM bt_user
+        <where>
+            user_id = #{userId}
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studybook.between.auth.mapper.AuthMapper">
+    <select id="getUser" resultType="com.studybook.between.user.model.User">
+        SELECT
+          user_id AS userId,
+          email AS email,
+          user_name AS userName,
+          password AS password,
+          couple_email AS coupleEmail,
+          status_code AS statusCode,
+          create_date AS createDate,
+          now() AS nowDate
+        FROM bt_user
+        <where>
+            email = #{email}
+        </where>
+    </select>
+
+    <select id="getUsersByCoupleEmail" resultType="com.studybook.between.user.model.User">
+        SELECT
+        user_id AS userId,
+        email AS email,
+        user_name AS userName,
+        password AS password,
+        couple_email AS coupleEmail,
+        status_code AS statusCode,
+        create_date AS createDate,
+        now() AS nowDate
+        FROM bt_user
+        <where>
+            couple_email = #{coupleEmail}
+        </where>
+    </select>
+
+    <insert id="createUser">
+        INSERT INTO bt_user (
+          email,
+          user_name,
+          password,
+          couple_email,
+          status_code,
+          create_date
+        ) VALUES (
+          #{user.email},
+          #{user.userName},
+          #{user.password},
+          #{user.coupleEmail},
+          #{user.statusCode},
+          now()
+        )
+        <selectKey resultType="int" keyProperty="userId">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <update id="updateUserActivate">
+        UPDATE bt_user
+        <set>
+            status_code = '02'
+        </set>
+        <where>
+            email = #{email}
+        </where>
+    </update>
+
+    <delete id="deleteUserByEmails">
+        DELETE
+        FROM bt_user
+        <where>
+            AND couple_email IN
+            <foreach collection="emails" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+            AND status_code = '01'
+        </where>
+    </delete>
+
+    <delete id="deleteNotMatchedUser">
+        DELETE
+        FROM bt_user
+        <where>
+            AND couple_email = #{coupleEmail}
+            AND status_code = '01'
+        </where>
+    </delete>
+
+
+
+</mapper>
