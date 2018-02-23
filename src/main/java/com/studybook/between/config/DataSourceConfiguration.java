@@ -1,6 +1,7 @@
 package com.studybook.between.config;
 
 import com.studybook.between.auth.mapper.AuthMapper;
+import com.studybook.between.file.mapper.FileMapper;
 import com.studybook.between.post.mapper.PostMapper;
 import com.studybook.between.user.mapper.UserMapper;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -30,6 +31,7 @@ public class DataSourceConfiguration {
         sqlSessionFactory.getConfiguration().addMapper(AuthMapper.class);
         sqlSessionFactory.getConfiguration().addMapper(PostMapper.class);
         sqlSessionFactory.getConfiguration().addMapper(UserMapper.class);
+        sqlSessionFactory.getConfiguration().addMapper(FileMapper.class);
         return sqlSessionFactory;
     }
 
@@ -49,6 +51,12 @@ public class DataSourceConfiguration {
     public UserMapper userMapper() throws Exception {
         SqlSessionTemplate sessionTemplate = new SqlSessionTemplate(sqlSessionFactory());
         return sessionTemplate.getMapper(UserMapper.class);
+    }
+
+    @Bean
+    public FileMapper fileMapper() throws Exception {
+        SqlSessionTemplate sessionTemplate = new SqlSessionTemplate(sqlSessionFactory());
+        return sessionTemplate.getMapper(FileMapper.class);
     }
 
 }

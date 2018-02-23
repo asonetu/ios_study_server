@@ -18,4 +18,8 @@ public class UserDao {
     public User getUserProfile(String userId) {
         return userMapper.getUserProfile(userId);
     }
+
+    public void updateUserProfileImage(String userId, Integer fileId) {
+        userMapper.updateUserProfileImage(userId, fileId);
+    }
 }

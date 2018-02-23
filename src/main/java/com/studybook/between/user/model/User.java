@@ -1,8 +1,10 @@
 package com.studybook.between.user.model;
 
+import com.studybook.between.common.util.GsonToString;
+
 import java.util.Date;
 
-public class User {
+public class User extends GsonToString {
 
     private int userId;
     private String email;
@@ -13,6 +15,7 @@ public class User {
 
     private Date createDate;
     private Date nowDate;
+    private int profileFileId;
 
     public int getUserId() {
         return userId;
@@ -78,17 +81,12 @@ public class User {
         this.nowDate = nowDate;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", email='" + email + '\'' +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", coupleEmail='" + coupleEmail + '\'' +
-                ", statusCode='" + statusCode + '\'' +
-                ", createDate=" + createDate +
-                ", nowDate=" + nowDate +
-                '}';
+    public int getProfileFileId() {
+        return profileFileId;
     }
+
+    public void setProfileFileId(int profileFileId) {
+        this.profileFileId = profileFileId;
+    }
+
 }

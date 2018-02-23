@@ -1,13 +1,20 @@
 package com.studybook.between.user.controller;
 
+import com.studybook.between.common.model.Constants;
 import com.studybook.between.common.util.ResponseCode;
 import com.studybook.between.common.util.RestResponse;
+import com.studybook.between.file.model.FileInfo;
+import com.studybook.between.file.service.FileService;
 import com.studybook.between.user.model.User;
 import com.studybook.between.user.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Base64;
 
 @RestController
 @RequestMapping(value = "/v1")
@@ -17,6 +24,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FileService fileService;
+
 
     @RequestMapping(value = "/user/profile", method = RequestMethod.POST)
     public RestResponse createUserProfile(@RequestBody User user) {
@@ -29,8 +40,8 @@ public class UserController {
         return new RestResponse(ResponseCode.SUCCESS, null);
     }
 
-    @RequestMapping(value = "/user/profile/{userId}", method = RequestMethod.GET)
-    public RestResponse getUserProfile(@PathVariable("userId") String userId) {
+    @RequestMapping(value = "/user/profile", method = RequestMethod.GET)
+    public RestResponse getUserProfile(@RequestParam("userId") String userId) {
 
         log.info("getUserProfile userId : " + userId);
 
@@ -40,22 +51,46 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/profile/image", method = RequestMethod.POST)
-    public RestResponse uploadUserProfileImage(MultipartFile multipartFile, @RequestParam("userId") String userId) {
+    public RestResponse uploadUserProfileImage(@RequestParam("file") MultipartFile multipartFile, @RequestParam("userId") String userId) {
 
         log.info("uploadUserProfileImage userId : " + userId);
 
-        // TODO [hongsik.kim] 이미지 업로드 처리 해야함.
+        Integer fileId = userService.uploadUserProfileImage(multipartFile, userId);
 
-        return new RestResponse(ResponseCode.SUCCESS, null);
+        log.info("uploadUserProfileImage result fileId : " + fileId);
+
+        return new RestResponse(ResponseCode.SUCCESS, fileId);
     }
 
-    @RequestMapping(value = "/user/profile/image/{imageId}", method = RequestMethod.GET)
-    public RestResponse downloadUserProfileImage(@PathVariable("imageId") String imageId) {
+    @RequestMapping(value = "/user/profile/image", method = RequestMethod.GET)
+    public RestResponse downloadUserProfileImage(@RequestParam("fileId") String fileId) {
 
-        log.info("downloadUserProfileImage imageId : " + imageId);
+        log.info("downloadUserProfileImage fileId : " + fileId);
 
-        // TODO [hongsik.kim] 이미지 다운로드 처리 해야함.
+        FileInfo fileInfo = fileService.getFileInfo(fileId);
 
-        return new RestResponse(ResponseCode.SUCCESS, null);
+        File file = new File(Constants.FILE_PATH + File.separator + fileInfo.getFileName());
+        FileInputStream fis = null;
+        try {
+            byte[] data = new byte[(int) file.length()];
+            fis = new FileInputStream(file);
+            fis.read(data);
+
+            String base64Data = Base64.getEncoder().encodeToString(data);
+            fileInfo.setBase64Data(base64Data);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(fis != null) {
+                try {
+                    fis.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return new RestResponse(ResponseCode.SUCCESS, fileInfo);
     }
 }

@@ -7,4 +7,6 @@ public interface UserMapper {
     void createUserProfile(@Param("user") User user);
 
     User getUserProfile(@Param("userId") String userId);
+
+    void updateUserProfileImage(@Param("userId") String userId, @Param("fileId") Integer fileId);
 }

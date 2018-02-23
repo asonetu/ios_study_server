@@ -29,11 +29,22 @@
             password AS password,
             couple_email AS coupleEmail,
             status_code AS statusCode,
-            create_date AS createDate
+            create_date AS createDate,
+            profile_file_id AS profileFileId
         FROM bt_user
         <where>
             user_id = #{userId}
         </where>
     </select>
+    
+    <update id="updateUserProfileImage">
+        UPDATE bt_user
+        <set>
+            profile_file_id = #{fileId}
+        </set>
+        <where>
+            user_id = #{userId}
+        </where>
+    </update>
 
 </mapper>
